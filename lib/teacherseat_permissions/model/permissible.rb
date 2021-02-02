@@ -12,7 +12,8 @@ module TeacherseatPermissions
         provider, namespace, system, subsystem, action = permission.downcase.split(':')
         logger.debug "permission?: provider: #{provider} namespace: #{namespace} system: #{system} subsystem: #{subsystem} action: #{action}"
 
-        result = self.permissions_tree
+        user = TsAdminIam::Admin.find_by(user_id: self.id)
+        result = user.permissions_tree
           .try('[]',provider)
           .try('[]',namespace)
           .try('[]',system)
@@ -58,7 +59,8 @@ module TeacherseatPermissions
       def permission permission
         provider, namespace, system, subsystem, action = permission.downcase.split(':')
 
-        result = self.permissions_tree
+        user = TsAdminIam::Admin.find_by(user_id: self.id)
+        result = user.permissions_tree
           .try('[]',provider)
           .try('[]',namespace)
           .try('[]',system)
