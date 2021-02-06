@@ -11,7 +11,7 @@ module TeacherseatPermissions
         rescue_from TeacherseatPermissions::Error::StaticDenied, with: :static_permission_denied
       end
 
-      def permission_required name, format: :json
+      def permission_required name, format=:json
         permission = _user.permission(name)
         if permission && permission['effect'] == 'allow'
           return permission
