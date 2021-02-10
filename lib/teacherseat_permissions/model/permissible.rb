@@ -4,7 +4,8 @@ module TeacherseatPermissions
       extend ActiveSupport::Concern
 
       def admin?
-        self.access_admin?
+        admin = TsAdminIam::Admin.find_by(user_id: self.id)
+        admin && admin.access_admin
       end
 
       def permission? permission, conditions={}
