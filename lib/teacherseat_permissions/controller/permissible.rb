@@ -28,7 +28,7 @@ module TeacherseatPermissions
         qs = []
         qs.push "permission=#{ex.permission}"
         qs.push "condition=#{ex.condition}"
-        return(redirect_to "#{ENV['ADMIN_MOUNT_URL']}/access_denied?#{qs.join('&')}", status: 403)
+        return(redirect_to "#{ENV['ADMIN_MOUNT_URL']}/access_denied?#{qs.join('&')}", status: 302)
       end
 
       def api_permission_denied ex
