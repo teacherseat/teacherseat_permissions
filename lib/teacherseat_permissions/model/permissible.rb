@@ -9,9 +9,13 @@ module TeacherseatPermissions
       end
 
       def permission? permission, conditions={}
-        logger.debug "permission?: #{permission} #{conditions.to_json}"
+        tslogger = Logger.new Rails.root.join('log','teacherseat_permissions.log')
+        tslogger.level = Logger::DEBUG
+
+
+        tslogger.debug "permission?: #{permission} #{conditions.to_json}"
         provider, namespace, system, subsystem, action = permission.downcase.split(':')
-        logger.debug "permission?: provider: #{provider} namespace: #{namespace} system: #{system} subsystem: #{subsystem} action: #{action}"
+        tslogger.debug "permission?: provider: #{provider} namespace: #{namespace} system: #{system} subsystem: #{subsystem} action: #{action}"
 
         user = TsAdminIam::Admin.find_by(user_id: self.id)
         result = user.permissions_tree
@@ -20,38 +24,38 @@ module TeacherseatPermissions
           .try('[]',system)
           .try('[]',subsystem)
           .try('[]',action)
-        logger.debug("result: #{result.inspect}")
+        tslogger.debug("result: #{result.inspect}")
 
         if result
           # if there are conditions process them
           if result['condition'] && conditions != :ignore
-            logger.debug("checking condition")
+            tslogger.debug("checking condition")
             conditions.stringify_keys!
             result['effect'] == 'allow' &&
             result['condition'].all?{ |k,v|
               if conditions.key?(k)
                 if v.is_a?(Array)
-                  logger.debug("condition key array")
+                  tslogger.debug("condition key array")
                   v.include?(conditions[k])
                 elsif conditions[k].to_s == v.to_s
-                  logger.debug("condition string array")
+                  tslogger.debug("condition string array")
                   true
                 elsif
-                  logger.debug("condition not match : return false")
+                  tslogger.debug("condition not match : return false")
                   false
                 end
               else
-                logger.debug("no condition key: return false")
+                tslogger.debug("no condition key: return false")
                 false
               end
             }
           else
-            logger.debug("no condition to check")
-            logger.debug("return: #{result['effect'] == 'allow'}")
+            tslogger.debug("no condition to check")
+            tslogger.debug("return: #{result['effect'] == 'allow'}")
             result['effect'] == 'allow'
           end
         else
-            logger.debug("return false")
+            tslogger.debug("return false")
           false
         end
       end
