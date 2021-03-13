@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    teacherseat-permissions (1.2.0)
+    teacherseat-permissions (1.2.2)
 
 GEM
   remote: https://rubygems.org/

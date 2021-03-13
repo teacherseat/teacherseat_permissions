@@ -11,8 +11,8 @@ module TeacherseatPermissions
 
           def switch_tenant
             tenant =
-            if request.domain == ENV['PRIMARY_DOMAIN'] && request.subdomain.match(/-app$/)
-              TsAdminTen::Tenant.find_by(subdomain: "#{request.subdomain.sub(/-app$/,'')}")
+            if request.domain == ENV['PRIMARY_DOMAIN'] && request.subdomain.match(/\.app$/)
+              TsAdminTen::Tenant.find_by(subdomain: "#{request.subdomain.sub(/\.app$/,'')}")
             else
               TsAdminTen::Tenant.find_by(customdomain: request.host)
             end
