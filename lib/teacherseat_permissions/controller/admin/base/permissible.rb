@@ -9,8 +9,8 @@ module TeacherseatPermissions
 
           included do
             rescue_from TeacherseatPermissions::Error::StaticDenied, with: :static_permission_denied
-            before_action :admin_access_required,
-                          :switch_tenant
+            before_action :switch_tenant,
+                          :admin_access_required
           end
 
           def switch_tenant
