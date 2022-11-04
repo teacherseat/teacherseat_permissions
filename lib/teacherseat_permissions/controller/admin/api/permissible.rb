@@ -14,10 +14,21 @@ module TeacherseatPermissions
           end
 
           def switch_tenant
-            TsAdminTen::Tenant.set_tenant_id(_user.tenant_id)
+            tenant =
+            if request.domain == ENV['PRIMARY_DOMAIN'] && request.subdomain.match(/\.app$/)
+              TsAdminTen::Tenant.find_by(subdomain: "#{request.subdomain.sub(/\.app$/,'')}")
+            else
+              TsAdminTen::Tenant.find_by(customdomain: request.host)
+            end
+            unless tenant
+              return render(json: {redirect_to: "#{ENV['ADMIN_MOUNT_URL']}/access_denied"}, status: 403)
+            end
           end
 
           def admin_api_access_required
+            unless logged_in?
+              raise TeacherseatPermissions::Error::ApiDenied.new(nil,'AuthenticationError',nil)
+            end
             unless _user.admin?
               raise TeacherseatPermissions::Error::ApiDenied.new(nil,'AdminAccess',nil)
             end
