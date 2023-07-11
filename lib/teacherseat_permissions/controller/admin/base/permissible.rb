@@ -28,11 +28,16 @@ module TeacherseatPermissions
 
           def admin_access_required
             unless logged_in?
+              store_location
               return(redirect_to "#{ENV['STUDENT_MOUNT_PATH']}/auth/login", status: 302)
             end
             unless _user.admin?
               raise TeacherseatPermissions::Error::StaticDenied.new(nil,'AdminAccess',nil)
             end
+          end
+          
+          def store_location
+            session[:return_to] = request.url
           end
 
           def permission_required name
